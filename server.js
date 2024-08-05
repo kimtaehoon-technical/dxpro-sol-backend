@@ -7,7 +7,7 @@ const iconv = require('iconv-lite');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -32,11 +32,10 @@ app.post('/send-email', upload.single('file'), async (req, res) => {
   const { name, telephone, email, saiyoselect, message, consent, formType } = req.body;
   const file = req.file;
 
-  if (!file) {
-    return res.status(400).send('File upload failed.');
+  // Handle file cases
+  if (formType === 'application' && !file) {
+    return res.status(400).send('File upload is required for application form.');
   }
-
-  const decodedFileName = iconv.decode(Buffer.from(file.originalname, 'latin1'), 'utf8');
 
   const transporter = nodemailer.createTransport({
     host: 'mail1022.onamae.ne.jp',
@@ -133,12 +132,10 @@ app.post('/send-email', upload.single('file'), async (req, res) => {
             </div>
           </body>
         </html>`,
-      attachments: [
-        {
-          filename: decodedFileName,
-          path: path.resolve(file.path)
-        }
-      ]
+      attachments: file ? [{
+        filename: file.originalname,
+        path: path.resolve(file.path)
+      }] : []
     };
   }
 

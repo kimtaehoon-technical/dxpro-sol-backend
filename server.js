@@ -14,7 +14,7 @@ const upload = multer({ dest: 'uploads/' });
 app.use(bodyParser.json());
 
 app.use(cors({
-  origin: 'http://dxpro-sol.com',
+  origin: '*',
   methods: 'GET,POST,PUT,DELETE,OPTIONS',
   allowedHeaders: 'Content-Type,Authorization'
 }));
